@@ -1,6 +1,6 @@
 ## a simple CRUD api that's basically a wrapper for my mongodb database
 
-Endpoint URL: https://
+Endpoint URL: https://db.xyr11.repl.co
 
 The token is some kind of password and is required for all API actions. Add the token to your `Authorization` header (see the examples below).
 
