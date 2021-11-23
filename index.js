@@ -12,6 +12,16 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
+/**
+ * Error logger and serializer
+ * @param {ErrorEvent} err
+ * @returns Object
+ */
+const errored = err => {
+  console.error(new Date(), err)
+  return serializeError(err)
+}
+
 // front page
 app.all('/', (req, res) => {
   res.type('txt')
@@ -38,17 +48,20 @@ app.all('/:collectionName', async (req, res) => {
   const reply = {}
   if (method === 'GET') {
     // get the whole collection
-    const result = await Schema.find()
-    if (result.length) {
-      reply.status = 'exists'
-      reply.data = result
-    } else {
-      reply.status = 'empty'
-    }
+    await Schema.find().then(result => {
+      if (result.length) {
+        reply.status = 'exists'
+        reply.data = result
+      } else {
+        reply.status = 'empty'
+      }
+    }).catch(err => { reply.error = errored(err) })
   } else if (method === 'POST') {
     // add new data
-    await new Schema({ t: body.time || Date.now(), d: body.data })
-    reply.status = 'done'
+    await new Schema({ t: body.time || Date.now(), d: body.data }).then(() => {
+      reply.status = 'done'
+      console.log(new Date(), 'Added new data for', params.collectionName)
+    }).catch(err => { reply.error = errored(err) })
   } else {
     return res.status(404)
   }
@@ -66,13 +79,14 @@ app.all('/:collectionName/ids', async (req, res) => {
   const reply = {}
   if (method === 'GET') {
     // get all ids of the collection
-    const result = await Schema.find().distinct('_id')
-    if (result.length) {
-      reply.status = 'exists'
-      reply.data = result
-    } else {
-      reply.status = 'empty'
-    }
+    await Schema.find().distinct('_id').then(result => {
+      if (result.length) {
+        reply.status = 'exists'
+        reply.data = result
+      } else {
+        reply.status = 'empty'
+      }
+    }).catch(err => { reply.error = errored(err) })
   } else {
     return res.status(404)
   }
@@ -101,23 +115,17 @@ app.all('/:collectionName/:objectId', async (req, res) => {
       } else {
         reply.status = 'empty'
       }
-    }).catch(err => {
-      console.error(err)
-      reply.error = serializeError(err)
-    })
+    }).catch(err => { reply.error = errored(err) })
   } else if (method === 'DELETE') {
     // delete
-    Schema.findOne({ _id: objectId }).then(async result => {
+    await Schema.findOne({ _id: objectId }).then(async result => {
       if (result) {
         reply.status = 'exists'
         await Schema.deleteOne({ _id: objectId })
       } else {
         reply.status = 'empty'
       }
-    }).catch(err => {
-      console.error(err)
-      reply.error = serializeError(err)
-    })
+    }).catch(err => { reply.error = errored(err) })
   } else {
     return res.status(404)
   }
