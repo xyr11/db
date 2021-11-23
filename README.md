@@ -25,11 +25,23 @@ fetch('http://localhost:3000?time='+Date.now())
 #### get collection
 ```js
 const headers = {
-  'Content-Type': 'application/json',
   'Authorization': 'nicePasscode12345679'
 }
 fetch('http://localhost:3000/test', {
   method: 'GET',
   headers
+}).then(res => res.json()).then(console.log)
+```
+
+#### add document to collection
+```js
+const headers = {
+  'Content-Type': 'application/json',
+  'Authorization': 'nicePasscode12345679'
+}
+fetch('http://localhost:3000/test', {
+  method: 'POST',
+  headers,
+  body: JSON.stringify({ foo: 'bar', data: 'youtube.com/watch?v=dQw4w9WgXcQ' })
 }).then(res => res.json()).then(console.log)
 ```
