@@ -7,11 +7,11 @@ The token is some kind of password and is required for all API actions. Add the 
 Endpoints | Methods | Req Body | Description | Returns
 -- | :--: | :--: | -- | --
 / | `?time=` | N/A | Get the one-way ping in ms. No need for authorization. | String
-/`collection` | `GET` | `token` | Get all documents of `collection`. | { status: `"exists"`/`"empty"`, <br> data: Array, <br> time: Unix time }
-/`collection` | `POST` | `token`, `data` | Add a new document on `collection`. | { time: Unix time }
-/`collection`/ids | `GET` | `token` | Fetch all IDs of `collection`. | status: `"exists"`/`"empty"`, <br> data: Array, <br> { time: Unix time }
-/`collection`/`id` | `GET` | `token` | Get the data of one document of `collection` using the id. | { status: `"exists"`/`"empty"`, <br> data: Object, <br> time: Unix time }
-/`collection`/`id` | `DELETE` | `token` | Delete one document of `collection` using the `id`. | { time: Unix time }
+/`collection` | `GET` | N/A | Get all documents of `collection`. | { status: `"exists"`/`"empty"`, <br> data: Array, <br> time: Unix time }
+/`collection` | `POST` | `data` | Add a new document on `collection`. | { time: Unix time }
+/`collection`/ids | `GET` | N/A | Fetch all IDs of `collection`. | status: `"exists"`/`"empty"`, <br> data: Array, <br> { time: Unix time }
+/`collection`/`id` | `GET` | N/A | Get the data of one document of `collection` using the id. | { status: `"exists"`/`"empty"`, <br> data: Object, <br> time: Unix time }
+/`collection`/`id` | `DELETE` | None | Delete one document of `collection` using the `id`. | { time: Unix time }
 
 *will add more in the future ofc*
 
